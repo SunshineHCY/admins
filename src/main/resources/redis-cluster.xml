@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <description>Jedis Cluster Configuration集群</description>
+            
+    <!-- expose-proxy="true" proxy-target-class="true"此两项配置 加如下调用方法，解决自调用注解无效问题((Bean) AopContext.currentProxy()).method();-->
+    <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true"/>
+    <!-- 加载配置属性文件 按需加载 -->
+    <!--<context:property-placeholder order="2" location="classpath:redis-cluster.properties"/>-->
+    <context:property-placeholder
+            order="2" location="file:/app/riches/config/riches_news_config"/>
+            
+    <bean name="genericObjectPoolConfig" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig">
+        <!--当没有空闲连接时，获取一个对象的最大等待时间。如果这个值小于0，则永不超时，一直等待，直到有空闲对象到来。
+        	如果大于0，则等待maxWaitMillis长时间，如果没有空闲对象，将抛出NoSuchElementException异常。默认值是-1；可以根据需要自己调整，单位是毫秒-->
+        <property name="maxWaitMillis" value="${maxWaitMillis}"/>
+        <!--对象池中管理的最多对象个数。默认值是8-->
+        <property name="maxTotal" value="${maxTotal}"/>
+        <!--对象池中最小的空闲对象个数。默认值是0-->
+        <property name="minIdle" value="${minIdle}"/>
+        <!--对象池中最大的空闲对象个数。默认值是8-->
+        <property name="maxIdle" value="${maxIdle}"/>
+    </bean>
+    <bean id="jedisCluster" class="com.pcaifu.system.redis.JedisClusterFactory">
+        <!--连接超时时间 默认为两秒-->
+        <property name="connectionTimeout" value="${connectionTimeout}"/>
+        <!--soTimeout: 返回值的超时时间-->
+        <property name="soTimeout" value="${soTimeout}"/>
+        <!--最多重定向次数，默认为5次-->
+        <property name="maxRedirections" value="${maxRedirections}"/>
+        <property name="genericObjectPoolConfig" ref="genericObjectPoolConfig"/>
+        <property name="jedisClusterNodes" value="${jedisClusterNodes}"/>
+    </bean>
+    
+</beans>

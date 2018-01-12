@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!--****************************** -->
+	<!-- console define -->
+	<!--****************************** -->
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{HH:mm:ss,SSS\} %p] [%t] %c - %m%n" />
+		</layout>
+
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="ERROR" />
+			<param name="levelMax" value="FATAL" />
+			<param name="AcceptOnMatch" value="true" />
+		</filter>
+	</appender>
+     
+   <appender name="COMMON-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="UTF-8" />
+	    <param name="File" value="/file/logs/news.paicaifu.com/newsadmin.log" />
+	    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+	    <layout class="org.apache.log4j.PatternLayout">
+	      <param name="ConversionPattern" value="[admin] %-d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-15c{1}: %m%n"/>
+	    </layout>
+   </appender>
+
+	<!-- [公共Appender] 汇总错误 -->
+	<appender name="ERROR-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="encoding" value="UTF-8" />
+		<param name="File" value="/file/logs/news.paicaifu.com/newsadmin-error.log" />
+		<param name="Threshold" value="error" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern" value="[admin] %-d{yyyy-MM-dd HH:mm:ss} %-5p %-15c{1}: %m%n"/>
+		</layout>
+	</appender>
+
+    <logger name="org.apache" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="ERROR-APPENDER"  />
+        <appender-ref ref="COMMON-APPENDER" />
+    </logger>
+    
+    <logger name="com.ppdai.riches" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="ERROR-APPENDER"  />
+        <appender-ref ref="COMMON-APPENDER" />
+    </logger>
+
+    <logger name="org.hibernate" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="ERROR-APPENDER" />
+        <appender-ref ref="COMMON-APPENDER" />
+    </logger>
+   
+    <logger name="org.springframework.orm.hibernate3.HibernateTransactionManager" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="ERROR-APPENDER" />
+        <appender-ref ref="COMMON-APPENDER" />
+    </logger>
+    
+    <logger name="org.springframework" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="ERROR-APPENDER" />
+           <appender-ref ref="COMMON-APPENDER" />
+    </logger>
+
+	<logger name="org.apache.catalina" additivity="false">
+		<level value="error"/>
+		<appender-ref ref="ERROR-APPENDER" />
+		   <appender-ref ref="COMMON-APPENDER" />
+	</logger>
+	
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="COMMON-APPENDER"/>
+        <appender-ref ref="ERROR-APPENDER"/>
+    </root>
+
+</log4j:configuration>
